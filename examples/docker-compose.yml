@@ -1,5 +1,6 @@
 # Run the warren hub with Docker Compose. From the repo root:
 #
+#   WARREN_PUBLIC_NODE_ADDR=hub.example.com:7000 \
 #   WARREN_PROXY_USER=me WARREN_PROXY_PASS=secret WARREN_ADMIN_TOKEN=admin \
 #     docker compose -f examples/docker-compose.yml up --build
 #
@@ -14,8 +15,11 @@ services:
     volumes:
       - warren-data:/data    # TLS cert + SQLite state, kept across restarts
     environment:
-      # Omit WARREN_ENROLL_TOKEN to have the hub mint one on first run.
+      # Unset or empty: mint a token on first run if none is stored.
       WARREN_ENROLL_TOKEN: ${WARREN_ENROLL_TOKEN:-}
+      # Address devices can reach; enables the ready-to-paste join command.
+      # Unset or empty: omit the join command.
+      WARREN_PUBLIC_NODE_ADDR: ${WARREN_PUBLIC_NODE_ADDR:-}
       WARREN_PROXY_USER: ${WARREN_PROXY_USER:?set a proxy username}
       WARREN_PROXY_PASS: ${WARREN_PROXY_PASS:?set a proxy password}
       WARREN_ADMIN_TOKEN: ${WARREN_ADMIN_TOKEN:?set an admin token}

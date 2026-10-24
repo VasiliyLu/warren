@@ -309,13 +309,22 @@ admin ports). [`examples/docker-compose.yml`](examples/docker-compose.yml) wires
 it up end to end:
 
 ```bash
+WARREN_PUBLIC_NODE_ADDR=hub.example.com:7000 \
 WARREN_PROXY_USER=me WARREN_PROXY_PASS=secret WARREN_ADMIN_TOKEN=admin \
   docker compose -f examples/docker-compose.yml up --build
 ```
 
-Set `WARREN_ENROLL_TOKEN`, `WARREN_PROXY_USER`, `WARREN_PROXY_PASS`, and
-`WARREN_ADMIN_TOKEN` in the environment (omit the enroll token to have the hub
-mint one on first run, printed in the logs).
+Set `WARREN_PROXY_USER`, `WARREN_PROXY_PASS`, and `WARREN_ADMIN_TOKEN` in the
+environment. Optionally set `WARREN_ENROLL_TOKEN`; when unset or empty, the hub
+mints a token if none is stored and prints it in the logs.
+
+Set `WARREN_PUBLIC_NODE_ADDR` to the host:port devices can reach (replace
+`hub.example.com:7000` above) to also print a ready-to-paste
+`warren node run --join ...` command. When unset or empty, no join command is
+printed. This setting is also available as `warren hub --public-node-addr`.
+
+Existing empty tokens saved by older versions are not removed automatically;
+delete them through the dashboard before restarting the hub to generate a token.
 
 ## Good to know
 

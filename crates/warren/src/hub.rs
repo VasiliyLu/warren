@@ -104,7 +104,7 @@ pub struct HubArgs {
     /// SQLite database (enrollment tokens + proxy users). Created if absent.
     #[arg(long, env = "WARREN_DB", default_value = "warren.db")]
     pub db: String,
-    /// Seed this enrollment token into the DB on startup (optional).
+    /// Seed this enrollment token into the DB on startup (empty means unset).
     #[arg(long, env = "WARREN_ENROLL_TOKEN")]
     pub enroll_token: Option<String>,
     /// Seed this proxy username into the DB on startup (with --proxy-pass).
@@ -606,7 +606,11 @@ fn print_startup(
     Ok(())
 }
 
-pub async fn run(args: HubArgs) -> Result<()> {
+pub async fn run(mut args: HubArgs) -> Result<()> {
+    // Compose passes optional environment variables as empty strings by default.
+    args.enroll_token = args.enroll_token.filter(|token| !token.is_empty());
+    args.public_node_addr = args.public_node_addr.filter(|addr| !addr.is_empty());
+
     let node_listener = TcpListener::bind(&args.listen)
         .await
         .with_context(|| format!("bind node listener {}", args.listen))?;
